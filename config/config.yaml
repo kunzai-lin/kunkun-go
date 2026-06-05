@@ -1,0 +1,5 @@
+server:
+  port: 5050
+
+database:
+  dsn: 'root:dflljzlwk0831@tcp(127.0.0.1:3306)/kunkunGo?charset=utf8mb4&parseTime=True&loc=Local'
