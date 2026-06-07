@@ -1,5 +1,10 @@
 server:
   port: 5050
 
+jwt:
+  # 生产环境务必改为足够长的随机串（至少 16 字符）
+  secret: "kunkun-go-dev-secret-change-me!!"
+  expire_hours: 72
+
 database:
   dsn: 'root:dflljzlwk0831@tcp(127.0.0.1:3306)/kunkunGo?charset=utf8mb4&parseTime=True&loc=Local'

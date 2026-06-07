@@ -3,9 +3,9 @@ package handler
 import (
 	"kunkun-go/internal/model"
 	"kunkun-go/internal/repository"
-	"kunkun-go/pkg/response"
-
 	"kunkun-go/internal/service"
+	"kunkun-go/pkg/jwt"
+	"kunkun-go/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -50,18 +50,19 @@ func LoginUser(c *gin.Context) {
 		return
 	}
 
-	// // 登录成功，签发 Token
-	// token, err := jwt.GenerateToken(user.ID)
-	// if err != nil {
-	// 	response.Error(c, 500, "生成 Token 失败")
-	// 	return
-	// }
+	token, err := jwt.GenerateToken(user.ID)
+	if err != nil {
+		response.Error(c, 500, "生成 Token 失败")
+		return
+	}
 
-	// response.Success(c, gin.H{
-	// 	"token": token,
-	// 	"user":  user,
-	// })
-	response.Success(c, user)
+	response.Success(c, gin.H{
+		"token": token,
+		"user": gin.H{
+			"id":       user.ID,
+			"username": user.UserName,
+		},
+	})
 }
 
 func GetUserInfo(c *gin.Context) {

@@ -1,6 +1,7 @@
 package model
 
 type RegisterUser struct {
+	ID           uint   `json:"id" gorm:"column:id;primaryKey"`
 	UserName     string `json:"username" binding:"required" gorm:"column:user_name;type:varchar(255)"`
 	UserPassword string `json:"password" binding:"required" gorm:"column:user_password;type:varchar(255)"`
 }
