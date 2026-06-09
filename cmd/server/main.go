@@ -23,6 +23,9 @@ func main() {
 	// 初始化数据库
 	repository.InitDB()
 
+	// 初始化 Redis
+	repository.InitRedis()
+
 	// 初始化路由
 	route := router.InitRouter()
 
@@ -54,6 +57,10 @@ func main() {
 
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatalf("Server forced to shutdown: %v\n", err)
+	}
+
+	if err := repository.CloseRedis(); err != nil {
+		log.Printf("redis close: %v\n", err)
 	}
 
 	log.Println("Server exiting")

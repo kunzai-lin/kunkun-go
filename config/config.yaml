@@ -8,3 +8,8 @@ jwt:
 
 database:
   dsn: 'root:dflljzlwk0831@tcp(127.0.0.1:3306)/kunkunGo?charset=utf8mb4&parseTime=True&loc=Local'
+
+redis:
+  addr: "127.0.0.1:6379"
+  password: "" # 本地默认无密码则留空
+  db: 0        # 逻辑库编号 0-15（默认 0）
