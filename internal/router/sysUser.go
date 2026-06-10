@@ -20,4 +20,5 @@ func SysUserRouter(router *gin.RouterGroup) {
 	protected.PUT("/update", handler.UpdateUser)
 	protected.DELETE("/delete", handler.DeleteUser)
 	protected.POST("/create", handler.CreateUser)
+	protected.POST("/logout", handler.LogoutUser)
 }

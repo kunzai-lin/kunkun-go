@@ -1,13 +1,17 @@
 package handler
 
 import (
+	"kunkun-go/internal/middleware"
 	"kunkun-go/internal/model"
 	"kunkun-go/internal/repository"
 	"kunkun-go/internal/service"
 	"kunkun-go/pkg/jwt"
 	"kunkun-go/pkg/response"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 // 注册用户
@@ -65,6 +69,32 @@ func LoginUser(c *gin.Context) {
 	})
 }
 
+// 退出登录
+func LogoutUser(c *gin.Context) {
+	// 与 middleware.CtxUserIDKey 一致（注意是 Ctx 不是 Cxt）
+	userID := c.GetUint(middleware.CtxUserIDKey)
+	if userID == 0 {
+		response.Error(c, 401, "用户未登录")
+		return
+	}
+	if repository.RDB == nil {
+		response.Error(c, 500, "服务未就绪")
+		return
+	}
+	h := viper.GetInt("jwt.expire_hours")
+	if h <= 0 {
+		h = 72
+	}
+	ttl := time.Duration(h) * time.Hour
+	key := "logout:" + strconv.Itoa(int(userID))
+	if err := repository.RDB.Set(c.Request.Context(), key, "1", ttl).Err(); err != nil {
+		response.Error(c, 500, "退出失败")
+		return
+	}
+	response.Success(c, "退出成功")
+}
+
+
 func GetUserInfo(c *gin.Context) {
 	var req struct {
 		ID uint `form:"id" binding:"required"`
@@ -75,7 +105,7 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 
-	user, err := service.GetUserInfo(req.ID)
+	user, err := service.GetUserInfo(c, req.ID)
 	if err != nil {
 		response.Error(c, 401, "用户不存在")
 		return
@@ -90,7 +120,7 @@ func UpdateUser(c *gin.Context) {
 		response.Error(c, 400, "参数错误: "+err.Error())
 		return
 	}
-	
+
 	if err := service.UpdateUser(&user); err != nil {
 		response.Error(c, 400, "更新失败")
 		return

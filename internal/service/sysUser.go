@@ -1,12 +1,26 @@
 package service
 
 import (
+	"encoding/json"
+	"fmt"
 	"kunkun-go/internal/model"
 	"kunkun-go/internal/repository"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取用户信息
-func GetUserInfo(id uint) (model.SysUser, error) {
+func GetUserInfo(ctx *gin.Context, id uint) (model.SysUser, error) {
+
+	// 从 Redis 中获取用户信息
+	key := fmt.Sprintf("user:info:%d", id)
+	cached, err := repository.RDB.Get(ctx, key).Result()
+	if err == nil {
+		var user model.SysUser
+		json.Unmarshal([]byte(cached), &user)
+		return user, nil
+	}
+	// 如果 Redis 中没有用户信息，则从数据库中获取
 	var user model.SysUser
 	if err := repository.DB.Where("id = ?", id).First(&user).Error; err != nil {
 		return user, err
