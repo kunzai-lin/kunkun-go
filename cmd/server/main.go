@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"kunkun-go/internal/repository"
 	"kunkun-go/internal/router"
+	"kunkun-go/internal/service"
 	"kunkun-go/pkg/config"
 	"log"
 	"net/http"
@@ -25,6 +26,9 @@ func main() {
 
 	// 初始化 Redis
 	repository.InitRedis()
+
+	// 初始化 COS 上传（依赖 .env 中的 COS_SECRET_ID / COS_SECRET_KEY）
+	service.InitCOSUpload()
 
 	// 初始化路由
 	route := router.InitRouter()
