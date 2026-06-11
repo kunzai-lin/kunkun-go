@@ -17,6 +17,7 @@ func SysUserRouter(router *gin.RouterGroup) {
 	protected := user.Group("")
 	protected.Use(middleware.JWTAuth())
 	protected.GET("/info", handler.GetUserInfo)
+	protected.GET("/list", handler.ListUsers)
 	protected.PUT("/update", handler.UpdateUser)
 	protected.DELETE("/delete", handler.DeleteUser)
 	protected.POST("/create", handler.CreateUser)

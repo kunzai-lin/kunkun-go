@@ -2,3 +2,4 @@
 uploads/
 *.exe
 task.db
+.agents/

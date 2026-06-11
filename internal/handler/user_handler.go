@@ -113,6 +113,36 @@ func GetUserInfo(c *gin.Context) {
 	response.Success(c, user)
 }
 
+// ListUsers 用户列表（分页）
+func ListUsers(c *gin.Context) {
+	var req struct {
+		Page     int `form:"page"`
+		PageSize int `form:"page_size"`
+	}
+	if err := c.ShouldBindQuery(&req); err != nil {
+		response.Error(c, 400, "参数错误")
+		return
+	}
+	if req.Page < 1 {
+		req.Page = 1
+	}
+	if req.PageSize < 1 {
+		req.PageSize = 10
+	}
+
+	users, total, err := service.ListUsers(req.Page, req.PageSize)
+	if err != nil {
+		response.Error(c, 500, "查询失败")
+		return
+	}
+	response.Success(c, gin.H{
+		"list":      users,
+		"total":     total,
+		"page":      req.Page,
+		"page_size": req.PageSize,
+	})
+}
+
 // 更新用户
 func UpdateUser(c *gin.Context) {
 	var user model.SysUser
